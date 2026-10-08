@@ -2,13 +2,42 @@
 
 作者：月夜烛峰
 
-同一个自然语言问题，左侧**本体增强管线**（词典识别 -> 关系链接 -> 本体推理 -> 路径规划 -> SQL 生成校验，确定性 Java，无 LLM）与右侧**传统 NL2SQL 管线**（模式读取 -> 列名匹配 -> 关联推断 -> DeepSeek 生成 -> 风险检测）并行真实执行，过程轨迹与真实计数并排对比。数字不是演的：数据中真实埋设的同义词写法散布、多表基数、时间挂靠歧义，被两种方法处理后产生真实差异。
+同一个自然语言问题，两条管线并行真实执行、并排对比：
 
-- **操作手册（对外推广版，含实测截图与架构图）：docs/manual.md**
-- 方案设计：docs/design.md
-- API 契约：docs/CONTRACT.md
-- 原型与页面说明：docs/prototype.md
-- 演示讲解词：docs/demo-script.md
+- **本体增强管线**：词典识别 -> 关系链接 -> 本体推理 -> 路径规划 -> SQL 生成校验。确定性 Java 实现，不依赖 LLM。
+- **传统 NL2SQL 管线**：模式读取 -> 列名匹配 -> 关联推断 -> DeepSeek 生成 -> 风险检测。
+
+演示数据中真实埋设了同义词写法散布、多表基数、时间挂靠歧义，两条管线处理后产生真实差异。页面上看到的每个数字都来自 SafeQueryExecutor 对数据库的真实查询，前后端不硬编码任何结果。
+
+![对比问答：同一个问题两条管线并排执行，结果与过程轨迹直接对比](docs/images/shots/compare-core.png)
+
+## 界面一览
+
+![本体问数：单管线问答](docs/images/shots/ontology-qa.png)
+
+![语义解析过程](docs/images/shots/parser-trace.png)
+
+![本体图谱：实例详情](docs/images/shots/graph-entity.png)
+
+![效果分析：36 题基准对比](docs/images/shots/comparison-benchmark.png)
+
+![本体运维：实例编辑](docs/images/shots/ops-instance.png)
+
+## 架构与流程
+
+![总体架构图](docs/images/architecture.svg)
+
+![双管线流程图](docs/images/pipeline-flow.svg)
+
+## 文档
+
+| 文档 | 说明 |
+|---|---|
+| [操作手册](docs/manual.md) | 环境搭建、演示路径、实测数字与截图 |
+| [方案设计](docs/design.md) | 本体建模与双管线设计 |
+| [API 契约](docs/CONTRACT.md) | 控制器与前端共同遵守的字段级契约 |
+| [原型与页面说明](docs/prototype.md) | 七页 SPA 的页面结构说明 |
+| [演示讲解词](docs/demo-script.md) | 演示流程讲稿 |
 
 ## 技术栈
 
@@ -71,19 +100,22 @@ mvn spring-boot:run     # 启动，端口 8080
 
 ```
 src/main/java/com/ontoquery/
-  ontology/   本体模型/加载/NER/关系链接/推理/路径/SQL 生成/校验/管线编排；ops/ 运维写操作与审计/回退/覆盖扫描
-  tradnl/     传统管线：模式读取/列名匹配/关联推断/管线编排
-  llm/        DeepSeek 客户端/缓存/SQL 抽取/Mock 缺陷生成器
-  risk/       SQL 风险检测（8 规则 + 真实证据查询）
-  compare/    双管线并行编排
-  benchmark/  基准运行器（36 题同跑比对）
-  web/        控制器与全局异常（5 位错误码）
-  sql/        SafeQueryExecutor（唯一 SQL 出口）/ ResultTable
-  support/    共享 DTO 与轻量分词
+├── ontology/        本体模型/加载/NER/关系链接/推理/路径/SQL 生成/校验/管线编排
+│   ├── ops/         运维写操作与审计/回退/覆盖扫描
+│   └── trace/       决策轨迹上下文
+├── tradnl/          传统管线：模式读取/列名匹配/关联推断/管线编排
+├── llm/             DeepSeek 客户端/缓存/SQL 抽取/Mock 缺陷生成器
+├── risk/            SQL 风险检测（8 规则 + 真实证据查询）
+├── compare/         双管线并行编排
+├── benchmark/       基准运行器（36 题同跑比对）
+├── web/             控制器与全局异常（5 位错误码）
+├── sql/             SafeQueryExecutor（唯一 SQL 出口）/ ResultTable
+├── config/          LLM 配置属性
+└── support/         共享 DTO 与轻量分词
 src/main/resources/
-  db/         01 建表 / 02 本体种子 / 03 确定性数据 / 04 本体变更审计
-  benchmark/  questions.json 36 题基准题库
-  static/     前端 SPA（七页，原生 ES module）
+├── db/              01 建表 / 02 本体种子 / 03 确定性数据 / 04 本体变更审计
+├── benchmark/       questions.json 36 题基准题库
+└── static/          前端 SPA（七页，原生 ES module）
 ```
 
 ## 规约说明
