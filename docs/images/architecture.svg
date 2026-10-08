@@ -1,0 +1,232 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="912" viewBox="0 0 1200 912" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <title>OntoQuery 总体架构：双管线数据面 + 本体运维控制面，共用唯一 SQL 出口</title>
+    <defs>
+        <marker id="arrowGray" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/>
+        </marker>
+        <marker id="arrowPurple" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#8b5cf6"/>
+        </marker>
+        <marker id="arrowCyan" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#06b6d4"/>
+        </marker>
+        <marker id="arrowAmber" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#f59e0b"/>
+        </marker>
+        <linearGradient id="gradPurple" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#a78bfa"/>
+            <stop offset="1" stop-color="#7c3aed"/>
+        </linearGradient>
+        <linearGradient id="gradCyan" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#22d3ee"/>
+            <stop offset="1" stop-color="#0891b2"/>
+        </linearGradient>
+        <linearGradient id="gradDual" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#8b5cf6"/>
+            <stop offset="1" stop-color="#06b6d4"/>
+        </linearGradient>
+        <linearGradient id="gradAmber" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#fbbf24"/>
+            <stop offset="1" stop-color="#d97706"/>
+        </linearGradient>
+        <radialGradient id="bgVignette" cx="0.5" cy="0.32" r="1.05">
+            <stop offset="0" stop-color="#101623"/>
+            <stop offset="0.55" stop-color="#0b0e14"/>
+            <stop offset="1" stop-color="#080a0e"/>
+        </radialGradient>
+        <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.45"/>
+        </filter>
+    </defs>
+
+    <rect x="0" y="0" width="1200" height="912" fill="url(#bgVignette)"/>
+
+    <!-- 标题与图例 -->
+    <text x="600" y="44" text-anchor="middle" font-size="21" font-weight="700" fill="#e2e8f0">OntoQuery 总体架构</text>
+    <text x="600" y="66" text-anchor="middle" font-size="12" fill="#94a3b8">双管线数据面 + 本体运维控制面 · 共用唯一 SQL 出口 · 图中数字均为演示库实测</text>
+    <circle cx="886" cy="40" r="4" fill="#8b5cf6"/>
+    <text x="896" y="44" font-size="11" fill="#94a3b8">本体侧</text>
+    <circle cx="956" cy="40" r="4" fill="#06b6d4"/>
+    <text x="966" y="44" font-size="11" fill="#94a3b8">传统侧</text>
+    <circle cx="1026" cy="40" r="4" fill="#f59e0b"/>
+    <text x="1036" y="44" font-size="11" fill="#94a3b8">运维控制面</text>
+    <circle cx="1120" cy="40" r="4" fill="#94a3b8"/>
+    <text x="1130" y="44" font-size="11" fill="#94a3b8">共用</text>
+
+    <!-- 层 1：浏览器 SPA（七页） -->
+    <rect x="40" y="86" width="1120" height="94" rx="12" fill="#11151d" stroke="#2a3242"/>
+    <rect x="40" y="86" width="1120" height="2" rx="1" fill="#334155"/>
+    <text x="60" y="110" font-size="13" font-weight="700" fill="#e2e8f0">浏览器 SPA（零构建 ES module · 七页）</text>
+    <text x="1140" y="110" text-anchor="end" font-size="11" fill="#94a3b8">原生 hash 路由 · 无 npm / node · 图标内联 SVG</text>
+    <rect x="52" y="122" width="148" height="44" rx="8" fill="#1a2029" stroke="#8b5cf6" stroke-opacity="0.75"/>
+    <text x="126" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#e2e8f0">对比问答</text>
+    <text x="126" y="156" text-anchor="middle" font-size="10.5" fill="#a78bfa">#/compare · 主演示</text>
+    <rect x="210" y="122" width="148" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <text x="284" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#e2e8f0">本体问数</text>
+    <text x="284" y="156" text-anchor="middle" font-size="10.5" fill="#94a3b8">#/ontology-qa</text>
+    <rect x="368" y="122" width="148" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <text x="442" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#e2e8f0">传统问数</text>
+    <text x="442" y="156" text-anchor="middle" font-size="10.5" fill="#94a3b8">#/traditional-qa</text>
+    <rect x="526" y="122" width="148" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <text x="600" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#e2e8f0">本体图谱</text>
+    <text x="600" y="156" text-anchor="middle" font-size="10.5" fill="#94a3b8">#/graph</text>
+    <rect x="684" y="122" width="148" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <text x="758" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#e2e8f0">语义解析过程</text>
+    <text x="758" y="156" text-anchor="middle" font-size="10.5" fill="#94a3b8">#/parser</text>
+    <rect x="842" y="122" width="148" height="44" rx="8" fill="#1a2029" stroke="#f59e0b" stroke-opacity="0.75"/>
+    <text x="916" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#e2e8f0">本体运维</text>
+    <text x="916" y="156" text-anchor="middle" font-size="10.5" fill="#fbbf24">#/ops · 控制面入口</text>
+    <rect x="1000" y="122" width="148" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <text x="1074" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#e2e8f0">对比分析</text>
+    <text x="1074" y="156" text-anchor="middle" font-size="10.5" fill="#94a3b8">#/comparison</text>
+
+    <path d="M 600 180 L 600 204" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+    <text x="612" y="197" font-size="11" fill="#94a3b8">HTTP REST · JSON（契约 docs/CONTRACT.md）</text>
+
+    <!-- 层 2：Spring Boot 应用层 -->
+    <rect x="40" y="210" width="1120" height="440" rx="12" fill="#11151d" stroke="#2a3242"/>
+    <rect x="40" y="210" width="1120" height="2" rx="1" fill="url(#gradDual)"/>
+    <text x="60" y="236" font-size="14" font-weight="700" fill="#e2e8f0">Spring Boot 8080<tspan font-size="11.5" font-weight="400" fill="#94a3b8"> · Java 21 · 无 JPA / 无 Lombok</tspan></text>
+    <text x="1140" y="236" text-anchor="end" font-size="11" fill="#94a3b8">四组控制器：/api/query · /api/ontology(+admin) · /api/meta · /api/benchmark</text>
+
+    <!-- 控制面：本体运维通道 -->
+    <rect x="64" y="250" width="1072" height="86" rx="10" fill="#171310" stroke="#f59e0b" stroke-opacity="0.5" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <rect x="80" y="264" width="4" height="16" rx="1" fill="url(#gradAmber)"/>
+    <text x="92" y="277" font-size="12.5" font-weight="700" fill="#e2e8f0">本体运维通道（控制面）<tspan font-size="11" font-weight="400" fill="#94a3b8"> · /api/ontology/admin/* · OntologyAdminService 门面串行入口</tspan></text>
+    <text x="1120" y="277" text-anchor="end" font-size="10.5" fill="#fbbf24">行级镜像落 ont_change_log · 回退也是可追溯变更集</text>
+    <rect x="84" y="290" width="188" height="32" rx="7" fill="#1f1a14" stroke="#3a3126"/>
+    <text x="178" y="310" text-anchor="middle" font-size="11.5" fill="#e2e8f0">编辑实例 / 同义词 / 映射</text>
+    <path d="M 276 306 L 292 306" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowAmber)"/>
+    <rect x="296" y="290" width="188" height="32" rx="7" fill="#1f1a14" stroke="#3a3126"/>
+    <text x="390" y="310" text-anchor="middle" font-size="11.5" fill="#e2e8f0">事务写入 + 审计落库</text>
+    <path d="M 488 306 L 504 306" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowAmber)"/>
+    <rect x="508" y="290" width="188" height="32" rx="7" fill="#1f1a14" stroke="#3a3126"/>
+    <text x="602" y="310" text-anchor="middle" font-size="11.5" fill="#e2e8f0">热加载 · 免重启</text>
+    <path d="M 700 306 L 716 306" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowAmber)"/>
+    <rect x="720" y="290" width="188" height="32" rx="7" fill="#1f1a14" stroke="#3a3126"/>
+    <text x="814" y="310" text-anchor="middle" font-size="11.5" fill="#e2e8f0">36 题内存基准验证</text>
+    <path d="M 912 306 L 928 306" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowAmber)"/>
+    <rect x="932" y="290" width="188" height="32" rx="7" fill="#1f1a14" stroke="#3a3126"/>
+    <text x="1026" y="310" text-anchor="middle" font-size="11.5" fill="#e2e8f0">验证报告 / 一键回退</text>
+
+    <!-- 控制面到本体管线的热加载虚线 -->
+    <path d="M 292 336 L 292 360" fill="none" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrowPurple)"/>
+    <text x="302" y="353" font-size="10.5" fill="#a78bfa">热加载后管线即时用新本体</text>
+
+    <!-- 左栏：本体增强管线 -->
+    <rect x="64" y="366" width="456" height="264" rx="10" fill="#11151d" stroke="#8b5cf6" stroke-opacity="0.55" stroke-width="1.5" filter="url(#softShadow)"/>
+    <rect x="80" y="380" width="4" height="16" rx="1" fill="url(#gradPurple)"/>
+    <text x="92" y="393" font-size="13" font-weight="700" fill="#e2e8f0">本体增强管线（确定性 Java，无 LLM）</text>
+    <rect x="80" y="404" width="424" height="38" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <rect x="82" y="410" width="3" height="26" rx="1.5" fill="#8b5cf6"/>
+    <text x="98" y="428" font-size="11" fill="#94a3b8">01</text>
+    <text x="122" y="428" font-size="12.5" font-weight="700" fill="#e2e8f0">词典识别</text>
+    <text x="490" y="428" text-anchor="end" font-size="10.5" fill="#94a3b8">Trie 最长匹配 · 提及打分</text>
+    <rect x="80" y="449" width="424" height="38" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <rect x="82" y="455" width="3" height="26" rx="1.5" fill="#8b5cf6"/>
+    <text x="98" y="473" font-size="11" fill="#94a3b8">02</text>
+    <text x="122" y="473" font-size="12.5" font-weight="700" fill="#e2e8f0">关系链接</text>
+    <text x="490" y="473" text-anchor="end" font-size="10.5" fill="#94a3b8">domain / range 匹配挂边</text>
+    <rect x="80" y="494" width="424" height="38" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <rect x="82" y="500" width="3" height="26" rx="1.5" fill="#8b5cf6"/>
+    <text x="98" y="518" font-size="11" fill="#94a3b8">03</text>
+    <text x="122" y="518" font-size="12.5" font-weight="700" fill="#e2e8f0">本体推理</text>
+    <text x="490" y="518" text-anchor="end" font-size="10.5" fill="#94a3b8">同义归一 · 时间就近挂靠 · 值域校验</text>
+    <rect x="80" y="539" width="424" height="38" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <rect x="82" y="545" width="3" height="26" rx="1.5" fill="#8b5cf6"/>
+    <text x="98" y="563" font-size="11" fill="#94a3b8">04</text>
+    <text x="122" y="563" font-size="12.5" font-weight="700" fill="#e2e8f0">路径规划与 SQL 生成</text>
+    <text x="490" y="563" text-anchor="end" font-size="10.5" fill="#94a3b8">患者锚 + EXISTS 子查询规避 JOIN</text>
+    <rect x="80" y="584" width="424" height="38" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <rect x="82" y="590" width="3" height="26" rx="1.5" fill="#8b5cf6"/>
+    <text x="98" y="608" font-size="11" fill="#94a3b8">05</text>
+    <text x="122" y="608" font-size="12.5" font-weight="700" fill="#e2e8f0">校验与置信度</text>
+    <text x="490" y="608" text-anchor="end" font-size="10.5" fill="#94a3b8">EXPLAIN 检查 · 扣分因子逐项列出</text>
+
+    <!-- 中间：双管线并行编排 -->
+    <rect x="546" y="470" width="108" height="84" rx="10" fill="#1a2029" stroke="#2a3242"/>
+    <rect x="568" y="482" width="64" height="3" rx="1.5" fill="url(#gradDual)"/>
+    <text x="600" y="506" text-anchor="middle" font-size="12" font-weight="700" fill="#e2e8f0">双管线并行编排</text>
+    <text x="600" y="524" text-anchor="middle" font-size="10.5" fill="#94a3b8">同一问题</text>
+    <text x="600" y="539" text-anchor="middle" font-size="10.5" fill="#94a3b8">双路真实执行</text>
+    <path d="M 546 512 L 526 512" fill="none" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrowPurple)"/>
+    <path d="M 654 512 L 674 512" fill="none" stroke="#06b6d4" stroke-width="1.5" marker-end="url(#arrowCyan)"/>
+
+    <!-- 右栏：传统 NL2SQL 管线 -->
+    <rect x="680" y="366" width="456" height="264" rx="10" fill="#11151d" stroke="#06b6d4" stroke-opacity="0.55" stroke-width="1.5" filter="url(#softShadow)"/>
+    <rect x="696" y="380" width="4" height="16" rx="1" fill="url(#gradCyan)"/>
+    <text x="708" y="393" font-size="13" font-weight="700" fill="#e2e8f0">传统 NL2SQL 管线（DeepSeek）</text>
+    <rect x="696" y="404" width="424" height="38" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <rect x="698" y="410" width="3" height="26" rx="1.5" fill="#06b6d4"/>
+    <text x="714" y="428" font-size="11" fill="#94a3b8">01</text>
+    <text x="738" y="428" font-size="12.5" font-weight="700" fill="#e2e8f0">模式读取</text>
+    <text x="1106" y="428" text-anchor="end" font-size="10.5" fill="#94a3b8">9 张业务表 DDL 与列注释</text>
+    <rect x="696" y="449" width="424" height="38" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <rect x="698" y="455" width="3" height="26" rx="1.5" fill="#06b6d4"/>
+    <text x="714" y="473" font-size="11" fill="#94a3b8">02</text>
+    <text x="738" y="473" font-size="12.5" font-weight="700" fill="#e2e8f0">列名匹配</text>
+    <text x="1106" y="473" text-anchor="end" font-size="10.5" fill="#94a3b8">字面子串匹配 · 无同义归一</text>
+    <rect x="696" y="494" width="424" height="38" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <rect x="698" y="500" width="3" height="26" rx="1.5" fill="#06b6d4"/>
+    <text x="714" y="518" font-size="11" fill="#94a3b8">03</text>
+    <text x="738" y="518" font-size="12.5" font-weight="700" fill="#e2e8f0">关联推断</text>
+    <text x="1106" y="518" text-anchor="end" font-size="10.5" fill="#94a3b8">同名列启发式 · 无基数语义</text>
+    <rect x="696" y="539" width="424" height="38" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <rect x="698" y="545" width="3" height="26" rx="1.5" fill="#06b6d4"/>
+    <text x="714" y="563" font-size="11" fill="#94a3b8">04</text>
+    <text x="738" y="563" font-size="12.5" font-weight="700" fill="#e2e8f0">LLM 生成（DeepSeek）</text>
+    <text x="1106" y="563" text-anchor="end" font-size="10.5" fill="#94a3b8">SHA256 缓存 · 失败降级 Mock</text>
+    <rect x="696" y="584" width="424" height="38" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <rect x="698" y="590" width="3" height="26" rx="1.5" fill="#06b6d4"/>
+    <text x="714" y="608" font-size="11" fill="#94a3b8">05</text>
+    <text x="738" y="608" font-size="12.5" font-weight="700" fill="#e2e8f0">风险检测</text>
+    <text x="1106" y="608" text-anchor="end" font-size="10.5" fill="#94a3b8">8 条规则 + 真实证据查询</text>
+
+    <!-- 两条管线到唯一 SQL 出口 -->
+    <path d="M 292 630 L 292 654" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
+    <path d="M 908 630 L 908 654" fill="none" stroke="#06b6d4" stroke-width="2" marker-end="url(#arrowCyan)"/>
+
+    <!-- 层 3：SafeQueryExecutor -->
+    <rect x="40" y="660" width="1120" height="66" rx="12" fill="#11151d" stroke="#2a3242"/>
+    <rect x="40" y="660" width="1120" height="2" rx="1" fill="#10b981"/>
+    <text x="600" y="684" text-anchor="middle" font-size="14" font-weight="700" fill="#e2e8f0">SafeQueryExecutor · 唯一 SQL 出口（两侧谁也不许走后门）</text>
+    <rect x="288" y="696" width="196" height="22" rx="11" fill="#1a2029" stroke="#2a3242"/>
+    <text x="386" y="711" text-anchor="middle" font-size="11" fill="#94a3b8">白名单单条 SELECT / WITH</text>
+    <rect x="498" y="696" width="88" height="22" rx="11" fill="#1a2029" stroke="#2a3242"/>
+    <text x="542" y="711" text-anchor="middle" font-size="11" fill="#94a3b8">10 秒超时</text>
+    <rect x="600" y="696" width="92" height="22" rx="11" fill="#1a2029" stroke="#2a3242"/>
+    <text x="646" y="711" text-anchor="middle" font-size="11" fill="#94a3b8">500 行上限</text>
+    <rect x="706" y="696" width="180" height="22" rx="11" fill="#1a2029" stroke="#2a3242"/>
+    <text x="796" y="711" text-anchor="middle" font-size="11" fill="#94a3b8">DML / DDL 关键字直接拒绝</text>
+
+    <path d="M 600 726 L 600 750" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+    <text x="610" y="743" font-size="11" fill="#94a3b8">JDBC</text>
+
+    <!-- 层 4：MySQL 数据层 -->
+    <rect x="40" y="756" width="1120" height="138" rx="12" fill="#11151d" stroke="#2a3242"/>
+    <rect x="40" y="756" width="1120" height="2" rx="1" fill="#3b82f6"/>
+    <text x="60" y="782" font-size="13.5" font-weight="700" fill="#e2e8f0">MySQL 8（ontoquery）</text>
+    <text x="1140" y="782" text-anchor="end" font-size="11" fill="#94a3b8">无外键 / 无视图 / 无存储过程 · 索引只用 idx / uk / pk</text>
+    <rect x="60" y="794" width="348" height="86" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <text x="76" y="817" font-size="12.5" font-weight="700" fill="#e2e8f0">本体元表 ont_*（7 张）+ 变更审计</text>
+    <text x="76" y="838" font-size="11" fill="#94a3b8">16 类 · 182 实例 · 94 同义词</text>
+    <text x="76" y="856" font-size="11" fill="#94a3b8">8 关系 · 13 属性 · 208 映射 · 3 规则</text>
+    <text x="76" y="874" font-size="11" fill="#94a3b8">ont_change_log：变更镜像，可回退</text>
+    <rect x="426" y="794" width="348" height="86" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <text x="442" y="817" font-size="12.5" font-weight="700" fill="#e2e8f0">业务表 dim_* 与 fact_*（31 万事实行）</text>
+    <text x="442" y="838" font-size="11" fill="#94a3b8">dim_patient 2 万 · fact_visit 4 万</text>
+    <text x="442" y="856" font-size="11" fill="#94a3b8">fact_diagnosis 6 万 · fact_medication 9 万</text>
+    <text x="442" y="874" font-size="11" fill="#94a3b8">fact_lab_result 12 万 · 纯 SQL 确定性生成</text>
+    <rect x="792" y="794" width="348" height="86" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <text x="808" y="817" font-size="12.5" font-weight="700" fill="#e2e8f0">系统表（llm_cache、benchmark_*）</text>
+    <text x="808" y="838" font-size="11" fill="#94a3b8">llm_cache：LLM 应答按 SHA256 缓存</text>
+    <text x="808" y="856" font-size="11" fill="#94a3b8">benchmark_*：36 题六类目基准落库</text>
+    <text x="808" y="874" font-size="11" fill="#94a3b8">基准实测：本体 36/36 · 传统最高 18/36</text>
+
+    <!-- 左侧层级小标 -->
+    <text x="24" y="133" text-anchor="middle" font-size="11" fill="#94a3b8" opacity="0.6" transform="rotate(-90 24 133)">接入层</text>
+    <text x="24" y="430" text-anchor="middle" font-size="11" fill="#94a3b8" opacity="0.6" transform="rotate(-90 24 430)">应用层</text>
+    <text x="24" y="693" text-anchor="middle" font-size="11" fill="#94a3b8" opacity="0.6" transform="rotate(-90 24 693)">安全层</text>
+    <text x="24" y="825" text-anchor="middle" font-size="11" fill="#94a3b8" opacity="0.6" transform="rotate(-90 24 825)">数据层</text>
+</svg>

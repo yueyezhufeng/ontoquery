@@ -1,0 +1,34 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    import: "optional:file:./local.yml"
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/ontoquery?useUnicode=true&characterEncoding=utf8&connectionTimeZone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    username: ${ONTOQUERY_DB_USERNAME:demo}
+    password: ${ONTOQUERY_DB_PASSWORD:demo}
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 5000
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-bigdecimal-as-plain: true
+
+logging:
+  level:
+    com.ontoquery: info
+
+ontoquery:
+  llm:
+    enabled: true
+    base-url: ${ONTOQUERY_LLM_BASE_URL:https://api.deepseek.com/v1}
+    # 密钥不入仓库：放在项目根 local.yml（未跟踪）或环境变量 ONTOQUERY_LLM_API_KEY
+    api-key: ${ONTOQUERY_LLM_API_KEY:}
+    model: ${ONTOQUERY_LLM_MODEL:deepseek-flash}
+    timeout-ms: 60000
+    connect-timeout-ms: 5000
+    max-tokens: 4000
+    temperature: 0.0
+    retries: 1

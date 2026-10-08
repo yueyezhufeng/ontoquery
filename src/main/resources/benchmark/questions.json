@@ -1,0 +1,218 @@
+[
+  {
+    "questionNo": 1,
+    "category": "简单单表",
+    "question": "系统一共收录了多少名患者？",
+    "goldenSql": "SELECT COUNT(*) FROM dim_patient"
+  },
+  {
+    "questionNo": 2,
+    "category": "简单单表",
+    "question": "检验结果事实表里一共有多少条记录？",
+    "goldenSql": "SELECT COUNT(*) FROM fact_lab_result"
+  },
+  {
+    "questionNo": 3,
+    "category": "简单单表",
+    "question": "频次为每日两次（bid）的用药记录有多少条？",
+    "goldenSql": "SELECT COUNT(*) FROM fact_medication WHERE frequency = 'bid'"
+  },
+  {
+    "questionNo": 4,
+    "category": "简单单表",
+    "question": "门诊类型的就诊一共有多少人次？",
+    "goldenSql": "SELECT COUNT(*) FROM fact_visit WHERE visit_type = '门诊'"
+  },
+  {
+    "questionNo": 5,
+    "category": "简单单表",
+    "question": "就诊量最高的前五个科室及其就诊次数分别是多少？",
+    "goldenSql": "SELECT CONCAT('[', GROUP_CONCAT(CONCAT(dept_code, ':', c) ORDER BY c DESC, dept_code SEPARATOR ', '), ']') FROM (SELECT dept_code, COUNT(*) c FROM fact_visit GROUP BY dept_code ORDER BY c DESC LIMIT 5) t"
+  },
+  {
+    "questionNo": 6,
+    "category": "简单单表",
+    "question": "各医保类型的患者分别有多少人？",
+    "goldenSql": "SELECT CONCAT('[', GROUP_CONCAT(CONCAT(insurance_type, ':', c) ORDER BY insurance_type SEPARATOR ', '), ']') FROM (SELECT insurance_type, COUNT(*) c FROM dim_patient GROUP BY insurance_type) t"
+  },
+  {
+    "questionNo": 7,
+    "category": "两表关联",
+    "question": "被诊断为原发性高血压的患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_diagnosis t WHERE t.patient_id = p.patient_id AND t.disease_code = 'I10')"
+  },
+  {
+    "questionNo": 8,
+    "category": "两表关联",
+    "question": "使用过阿托伐他汀的患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_medication t WHERE t.patient_id = p.patient_id AND t.drug_code = 'D_ATORVASTATIN')"
+  },
+  {
+    "questionNo": 9,
+    "category": "两表关联",
+    "question": "近一个月做过糖化血红蛋白检验且结果异常的患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_lab_result t WHERE t.patient_id = p.patient_id AND t.test_code = 'LAB_HBA1C' AND t.is_abnormal = 1 AND t.test_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY))"
+  },
+  {
+    "questionNo": 10,
+    "category": "两表关联",
+    "question": "在内分泌科就诊过的患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_visit t WHERE t.patient_id = p.patient_id AND t.dept_code = 'DEPT_ENDO')"
+  },
+  {
+    "questionNo": 11,
+    "category": "两表关联",
+    "question": "开药记录最多的前五种药品及其记录数分别是多少？",
+    "goldenSql": "SELECT CONCAT('[', GROUP_CONCAT(CONCAT(drug_code, ':', c) ORDER BY c DESC, drug_code SEPARATOR ', '), ']') FROM (SELECT drug_code, COUNT(*) c FROM fact_medication GROUP BY drug_code ORDER BY c DESC LIMIT 5) t"
+  },
+  {
+    "questionNo": 12,
+    "category": "两表关联",
+    "question": "住院就诊的患者中男性和女性各有多少人？",
+    "goldenSql": "SELECT CONCAT('[', GROUP_CONCAT(CONCAT(gender, ':', c) ORDER BY gender SEPARATOR ', '), ']') FROM (SELECT p.gender, COUNT(DISTINCT p.patient_id) c FROM dim_patient p JOIN fact_visit v ON v.patient_id = p.patient_id AND v.visit_type = '住院' GROUP BY p.gender) t"
+  },
+  {
+    "questionNo": 13,
+    "category": "多表复杂",
+    "question": "近三个月诊断为2型糖尿病且糖化血红蛋白大于8、使用二甲双胍治疗的患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_diagnosis t0 WHERE t0.patient_id = p.patient_id AND t0.disease_code = 'E11' AND t0.diagnosis_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)) AND EXISTS (SELECT 1 FROM fact_lab_result t1 WHERE t1.patient_id = p.patient_id AND t1.test_code = 'LAB_HBA1C' AND t1.result_value > 8) AND EXISTS (SELECT 1 FROM fact_medication t2 WHERE t2.patient_id = p.patient_id AND t2.drug_code = 'D_METFORMIN')"
+  },
+  {
+    "questionNo": 14,
+    "category": "多表复杂",
+    "question": "同时诊断为充血性心力衰竭和慢性肾脏病的患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_diagnosis t0 WHERE t0.patient_id = p.patient_id AND t0.disease_code = 'I50.0') AND EXISTS (SELECT 1 FROM fact_diagnosis t1 WHERE t1.patient_id = p.patient_id AND t1.disease_code = 'N18')"
+  },
+  {
+    "questionNo": 15,
+    "category": "多表复杂",
+    "question": "诊断为2型糖尿病且使用格列美脲治疗的患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_diagnosis t0 WHERE t0.patient_id = p.patient_id AND t0.disease_code = 'E11') AND EXISTS (SELECT 1 FROM fact_medication t1 WHERE t1.patient_id = p.patient_id AND t1.drug_code = 'D_GLIMEPIRIDE')"
+  },
+  {
+    "questionNo": 16,
+    "category": "多表复杂",
+    "question": "2型糖尿病患者的糖化血红蛋白平均值是多少？",
+    "goldenSql": "SELECT CONCAT(ROUND(AVG(t1.result_value), 2), '') FROM fact_lab_result t1 WHERE t1.test_code = 'LAB_HBA1C' AND EXISTS (SELECT 1 FROM fact_diagnosis t0 WHERE t0.patient_id = t1.patient_id AND t0.disease_code = 'E11')"
+  },
+  {
+    "questionNo": 17,
+    "category": "多表复杂",
+    "question": "近一个月诊断为急性心肌梗死并使用阿司匹林的患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_diagnosis t0 WHERE t0.patient_id = p.patient_id AND t0.disease_code = 'I21.9' AND t0.diagnosis_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)) AND EXISTS (SELECT 1 FROM fact_medication t1 WHERE t1.patient_id = p.patient_id AND t1.drug_code = 'D_ASPIRIN')"
+  },
+  {
+    "questionNo": 18,
+    "category": "多表复杂",
+    "question": "2型糖尿病（E11）诊断在数据中的各名称写法分别有多少条？",
+    "goldenSql": "SELECT CONCAT('[', GROUP_CONCAT(CONCAT(disease_name, ':', c) ORDER BY c DESC, disease_name SEPARATOR ', '), ']') FROM (SELECT disease_name, COUNT(*) c FROM fact_diagnosis WHERE disease_code = 'E11' GROUP BY disease_name) t"
+  },
+  {
+    "questionNo": 19,
+    "category": "同义词理解",
+    "question": "被诊断为II型糖尿病（含糖尿病II型、成人糖尿病、非胰岛素依赖型糖尿病等写法）的患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_diagnosis t WHERE t.patient_id = p.patient_id AND t.disease_code = 'E11')"
+  },
+  {
+    "questionNo": 20,
+    "category": "同义词理解",
+    "question": "使用格华止（盐酸二甲双胍片、降糖片）治疗过的患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_medication t WHERE t.patient_id = p.patient_id AND t.drug_code = 'D_METFORMIN')"
+  },
+  {
+    "questionNo": 21,
+    "category": "同义词理解",
+    "question": "近一个月HbA1c（糖化血红蛋白、糖基化血红蛋白）大于7的患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_lab_result t WHERE t.patient_id = p.patient_id AND t.test_code = 'LAB_HBA1C' AND t.result_value > 7 AND t.test_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY))"
+  },
+  {
+    "questionNo": 22,
+    "category": "同义词理解",
+    "question": "心衰（心功能不全，即心力衰竭）患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_diagnosis t WHERE t.patient_id = p.patient_id AND t.disease_code = 'I50.9')"
+  },
+  {
+    "questionNo": 23,
+    "category": "同义词理解",
+    "question": "糖尿病相关诊断（1型、2型及其他类型，E10至E14）中条数最多的前五种编码及条数分别是多少？",
+    "goldenSql": "SELECT CONCAT('[', GROUP_CONCAT(CONCAT(disease_code, ':', c) ORDER BY c DESC, disease_code SEPARATOR ', '), ']') FROM (SELECT disease_code, COUNT(*) c FROM fact_diagnosis WHERE disease_code IN ('E10','E11','E12','E13','E14') GROUP BY disease_code ORDER BY c DESC LIMIT 5) t"
+  },
+  {
+    "questionNo": 24,
+    "category": "同义词理解",
+    "question": "血糖（空腹血糖、FPG）检验按是否异常分组各有多少条？",
+    "goldenSql": "SELECT CONCAT('[', GROUP_CONCAT(CONCAT(is_abnormal, ':', c) ORDER BY is_abnormal SEPARATOR ', '), ']') FROM (SELECT is_abnormal, COUNT(*) c FROM fact_lab_result WHERE test_code = 'LAB_FBG' GROUP BY is_abnormal) t"
+  },
+  {
+    "questionNo": 25,
+    "category": "时间修饰歧义",
+    "question": "近一个月新增的诊断记录有多少条（时间以诊断日期为准）？",
+    "goldenSql": "SELECT COUNT(*) FROM fact_diagnosis WHERE diagnosis_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)"
+  },
+  {
+    "questionNo": 26,
+    "category": "时间修饰歧义",
+    "question": "近三个月的检验结果记录有多少条（时间以检验日期为准）？",
+    "goldenSql": "SELECT COUNT(*) FROM fact_lab_result WHERE test_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)"
+  },
+  {
+    "questionNo": 27,
+    "category": "时间修饰歧义",
+    "question": "近一个月开具的用药记录有多少条（时间以开药日期为准）？",
+    "goldenSql": "SELECT COUNT(*) FROM fact_medication WHERE prescribe_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)"
+  },
+  {
+    "questionNo": 28,
+    "category": "时间修饰歧义",
+    "question": "近一个月诊断为2型糖尿病的患者有多少人（时间修饰挂在诊断日期上）？",
+    "goldenSql": "SELECT COUNT(DISTINCT patient_id) FROM fact_diagnosis WHERE disease_code = 'E11' AND diagnosis_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)"
+  },
+  {
+    "questionNo": 29,
+    "category": "时间修饰歧义",
+    "question": "近三个月各胰岛素药品（甘精、地特、门冬、赖脯、人胰岛素、预混）分别开了多少条？",
+    "goldenSql": "SELECT CONCAT('[', GROUP_CONCAT(CONCAT(drug_code, ':', c) ORDER BY c DESC, drug_code SEPARATOR ', '), ']') FROM (SELECT drug_code, COUNT(*) c FROM fact_medication WHERE drug_code LIKE 'D_INSULIN%' AND prescribe_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY) GROUP BY drug_code ORDER BY c DESC LIMIT 6) t"
+  },
+  {
+    "questionNo": 30,
+    "category": "时间修饰歧义",
+    "question": "近一个月诊断为2型糖尿病的患者平均糖化血红蛋白是多少？",
+    "goldenSql": "SELECT CONCAT(ROUND(AVG(t1.result_value), 2), '') FROM fact_lab_result t1 WHERE t1.test_code = 'LAB_HBA1C' AND t1.test_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND EXISTS (SELECT 1 FROM fact_diagnosis t0 WHERE t0.patient_id = t1.patient_id AND t0.disease_code = 'E11' AND t0.diagnosis_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY))"
+  },
+  {
+    "questionNo": 31,
+    "category": "多层推理",
+    "question": "诊断为2型糖尿病且使用降糖药（口服降糖药或胰岛素）治疗的患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_diagnosis t0 WHERE t0.patient_id = p.patient_id AND t0.disease_code = 'E11') AND EXISTS (SELECT 1 FROM fact_medication t1 WHERE t1.patient_id = p.patient_id AND (t1.drug_code IN ('D_METFORMIN','D_GLIMEPIRIDE','D_GLIBENCLAMIDE','D_GLICLAZIDE','D_GLIPIZIDE','D_REPAGLINIDE','D_ACARBOSE','D_VOGLIBOSE','D_PIOGLITAZONE','D_SITAGLIPTIN','D_EMPAGLIFLOZIN','D_DAPAGLIFLOZIN') OR t1.drug_code LIKE 'D_INSULIN%'))"
+  },
+  {
+    "questionNo": 32,
+    "category": "多层推理",
+    "question": "诊断为2型糖尿病、糖化血红蛋白大于9且近三个月使用胰岛素治疗的患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_diagnosis t0 WHERE t0.patient_id = p.patient_id AND t0.disease_code = 'E11') AND EXISTS (SELECT 1 FROM fact_lab_result t1 WHERE t1.patient_id = p.patient_id AND t1.test_code = 'LAB_HBA1C' AND t1.result_value > 9) AND EXISTS (SELECT 1 FROM fact_medication t2 WHERE t2.patient_id = p.patient_id AND t2.drug_code LIKE 'D_INSULIN%' AND t2.prescribe_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY))"
+  },
+  {
+    "questionNo": 33,
+    "category": "多层推理",
+    "question": "原发性高血压患者中使用钙拮抗剂（氨氯地平或硝苯地平）的有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_diagnosis t0 WHERE t0.patient_id = p.patient_id AND t0.disease_code = 'I10') AND EXISTS (SELECT 1 FROM fact_medication t1 WHERE t1.patient_id = p.patient_id AND t1.drug_code IN ('D_AMLODIPINE','D_NIFEDIPINE'))"
+  },
+  {
+    "questionNo": 34,
+    "category": "多层推理",
+    "question": "近三个月做过肌酐检验的慢性肾脏病患者有多少人？",
+    "goldenSql": "SELECT COUNT(DISTINCT p.patient_id) FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_diagnosis t0 WHERE t0.patient_id = p.patient_id AND t0.disease_code = 'N18') AND EXISTS (SELECT 1 FROM fact_lab_result t1 WHERE t1.patient_id = p.patient_id AND t1.test_code = 'LAB_CREAT' AND t1.test_date >= DATE_SUB(CURDATE(), INTERVAL 90 DAY))"
+  },
+  {
+    "questionNo": 35,
+    "category": "多层推理",
+    "question": "2型糖尿病患者最常合并的其他诊断（不含糖尿病类）前五种及条数分别是多少？",
+    "goldenSql": "SELECT CONCAT('[', GROUP_CONCAT(CONCAT(disease_code, ':', c) ORDER BY c DESC, disease_code SEPARATOR ', '), ']') FROM (SELECT fd.disease_code, COUNT(*) c FROM fact_diagnosis fd WHERE fd.disease_code NOT IN ('E10','E11','E12','E13','E14') AND EXISTS (SELECT 1 FROM fact_diagnosis e WHERE e.patient_id = fd.patient_id AND e.disease_code = 'E11') GROUP BY fd.disease_code ORDER BY c DESC, fd.disease_code LIMIT 5) t"
+  },
+  {
+    "questionNo": 36,
+    "category": "多层推理",
+    "question": "2型糖尿病患者按年龄分为青年（小于45岁）、中年（45-59岁）、老年（60岁及以上）各有多少人？",
+    "goldenSql": "SELECT CONCAT('[', GROUP_CONCAT(CONCAT(bucket, ':', c) ORDER BY bucket SEPARATOR ', '), ']') FROM (SELECT CASE WHEN TIMESTAMPDIFF(YEAR, p.birth_date, CURDATE()) < 45 THEN '青年(<45)' WHEN TIMESTAMPDIFF(YEAR, p.birth_date, CURDATE()) < 60 THEN '中年(45-59)' ELSE '老年(>=60)' END AS bucket, COUNT(DISTINCT p.patient_id) c FROM dim_patient p WHERE EXISTS (SELECT 1 FROM fact_diagnosis t0 WHERE t0.patient_id = p.patient_id AND t0.disease_code = 'E11') GROUP BY bucket) t"
+  }
+]

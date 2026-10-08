@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!-- OntoQuery 前端外壳 · 作者：月夜烛峰 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OntoQuery · 本体论智能问数系统</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-ic">O</div>
+      <div class="sb-logo-text">Onto<span>Query</span></div>
+    </div>
+
+    <nav class="sb-nav" id="nav">
+      <div class="sb-nav-group">
+        <div class="sb-nav-label">智能问数</div>
+        <a class="sb-nav-item" href="#/compare" data-route="compare">
+          <span class="sb-nav-ic" data-icon="compare"></span><span class="sb-nav-text">对比问答</span>
+        </a>
+        <a class="sb-nav-item" href="#/ontology-qa" data-route="ontology-qa">
+          <span class="sb-nav-ic" data-icon="brain"></span><span class="sb-nav-text">本体问数</span>
+        </a>
+        <a class="sb-nav-item" href="#/traditional-qa" data-route="traditional-qa">
+          <span class="sb-nav-ic" data-icon="robot"></span><span class="sb-nav-text">传统问数</span>
+        </a>
+      </div>
+
+      <div class="sb-nav-group">
+        <div class="sb-nav-label">本体中心</div>
+        <a class="sb-nav-item" href="#/graph" data-route="graph">
+          <span class="sb-nav-ic" data-icon="graph"></span><span class="sb-nav-text">本体图谱</span>
+        </a>
+        <a class="sb-nav-item" href="#/parser" data-route="parser">
+          <span class="sb-nav-ic" data-icon="flask"></span><span class="sb-nav-text">语义解析过程</span>
+        </a>
+        <a class="sb-nav-item" href="#/ops" data-route="ops">
+          <span class="sb-nav-ic" data-icon="wrench"></span><span class="sb-nav-text">本体运维</span>
+        </a>
+      </div>
+
+      <div class="sb-nav-group">
+        <div class="sb-nav-label">效果分析</div>
+        <a class="sb-nav-item" href="#/comparison" data-route="comparison">
+          <span class="sb-nav-ic" data-icon="scale"></span><span class="sb-nav-text">对比分析</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="sb-footer-name">OntoQuery</div>
+      <div class="sb-footer-author">作者 月夜烛峰</div>
+    </div>
+  </aside>
+
+  <!-- 主区 -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-title" id="topbar-title">对比问答</div>
+      <div class="topbar-right">
+        <div class="llm-chip" id="llm-chip" title="大模型服务状态"></div>
+        <button class="tb-btn" id="btn-export" title="导出上次对比问答的 SQL"></button>
+        <button class="tb-btn primary" id="btn-new" title="跳转到对比问答并聚焦输入框"></button>
+      </div>
+    </header>
+
+    <main class="view" id="view"></main>
+  </div>
+
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+<div id="modal-root"></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

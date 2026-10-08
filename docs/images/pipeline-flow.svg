@@ -1,0 +1,150 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <title>双管线语义到 SQL 流程对比（2026-10-08 核心问题实测）</title>
+    <defs>
+        <marker id="arrowGray" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/>
+        </marker>
+        <marker id="arrowPurple" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#8b5cf6"/>
+        </marker>
+        <marker id="arrowCyan" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#06b6d4"/>
+        </marker>
+        <linearGradient id="gradPurple" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#a78bfa"/>
+            <stop offset="1" stop-color="#7c3aed"/>
+        </linearGradient>
+        <linearGradient id="gradCyan" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#22d3ee"/>
+            <stop offset="1" stop-color="#0891b2"/>
+        </linearGradient>
+        <radialGradient id="bgVignette" cx="0.5" cy="0.3" r="1.05">
+            <stop offset="0" stop-color="#101623"/>
+            <stop offset="0.55" stop-color="#0b0e14"/>
+            <stop offset="1" stop-color="#080a0e"/>
+        </radialGradient>
+        <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.45"/>
+        </filter>
+    </defs>
+
+    <rect x="0" y="0" width="1200" height="700" fill="url(#bgVignette)"/>
+
+    <!-- 标题 -->
+    <text x="600" y="40" text-anchor="middle" font-size="20" font-weight="700" fill="#e2e8f0">双管线语义到 SQL 流程对比</text>
+    <text x="600" y="62" text-anchor="middle" font-size="12" fill="#94a3b8">示例问题实测于 2026-10-08 演示库 · 数字来自真实执行，非预设</text>
+
+    <!-- 自然语言问题 -->
+    <rect x="280" y="80" width="640" height="52" rx="10" fill="#1a2029" stroke="#334155" filter="url(#softShadow)"/>
+    <text x="600" y="102" text-anchor="middle" font-size="13" font-weight="700" fill="#e2e8f0">近一个月诊断为2型糖尿病且HbA1c大于7的患者中，</text>
+    <text x="600" y="121" text-anchor="middle" font-size="13" font-weight="700" fill="#e2e8f0">使用二甲双胍治疗的有多少人？</text>
+
+    <!-- 分流箭头 -->
+    <path d="M 420 132 L 420 156 L 292 156 L 292 176" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
+    <path d="M 780 132 L 780 156 L 908 156 L 908 176" fill="none" stroke="#06b6d4" stroke-width="2" marker-end="url(#arrowCyan)"/>
+
+    <!-- 左：本体增强管线 -->
+    <rect x="64" y="182" width="456" height="306" rx="12" fill="#11151d" stroke="#8b5cf6" stroke-opacity="0.55" stroke-width="1.5" filter="url(#softShadow)"/>
+    <rect x="80" y="196" width="4" height="16" rx="1" fill="url(#gradPurple)"/>
+    <text x="92" y="209" font-size="13" font-weight="700" fill="#e2e8f0">本体增强管线</text>
+    <text x="504" y="209" text-anchor="end" font-size="11" fill="#a78bfa">确定性 Java · 无 LLM · 全程轨迹</text>
+    <rect x="80" y="224" width="424" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <circle cx="102" cy="246" r="11" fill="#8b5cf6" fill-opacity="0.18" stroke="#8b5cf6"/>
+    <text x="102" y="250" text-anchor="middle" font-size="11" font-weight="700" fill="#c4b5fd">1</text>
+    <text x="124" y="243" font-size="12.5" font-weight="700" fill="#e2e8f0">词典识别</text>
+    <text x="124" y="260" font-size="10.5" fill="#94a3b8">识别 8 个提及 · 时间 / 比较 / 意图词同批识别</text>
+    <text x="494" y="250" text-anchor="end" font-size="10.5" fill="#a78bfa">94 同义词</text>
+    <rect x="80" y="275" width="424" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <circle cx="102" cy="297" r="11" fill="#8b5cf6" fill-opacity="0.18" stroke="#8b5cf6"/>
+    <text x="102" y="301" text-anchor="middle" font-size="11" font-weight="700" fill="#c4b5fd">2</text>
+    <text x="124" y="294" font-size="12.5" font-weight="700" fill="#e2e8f0">关系链接</text>
+    <text x="124" y="311" font-size="10.5" fill="#94a3b8">实体按 domain / range 挂到关系边</text>
+    <text x="494" y="301" text-anchor="end" font-size="10.5" fill="#a78bfa">2 条边</text>
+    <rect x="80" y="326" width="424" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <circle cx="102" cy="348" r="11" fill="#8b5cf6" fill-opacity="0.18" stroke="#8b5cf6"/>
+    <text x="102" y="352" text-anchor="middle" font-size="11" font-weight="700" fill="#c4b5fd">3</text>
+    <text x="124" y="345" font-size="12.5" font-weight="700" fill="#e2e8f0">本体推理</text>
+    <text x="124" y="362" font-size="10.5" fill="#94a3b8">同义归一 · 时间就近挂靠 · 值域校验，逐条给规则依据</text>
+    <text x="494" y="352" text-anchor="end" font-size="10.5" fill="#a78bfa">3 个约束</text>
+    <rect x="80" y="377" width="424" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <circle cx="102" cy="399" r="11" fill="#8b5cf6" fill-opacity="0.18" stroke="#8b5cf6"/>
+    <text x="102" y="403" text-anchor="middle" font-size="11" font-weight="700" fill="#c4b5fd">4</text>
+    <text x="124" y="396" font-size="12.5" font-weight="700" fill="#e2e8f0">路径规划与 SQL 生成</text>
+    <text x="124" y="413" font-size="10.5" fill="#94a3b8">患者为锚，每个约束独立 EXISTS 子查询</text>
+    <text x="494" y="403" text-anchor="end" font-size="10.5" fill="#a78bfa">免疫 JOIN 扇出</text>
+    <rect x="80" y="428" width="424" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <circle cx="102" cy="450" r="11" fill="#8b5cf6" fill-opacity="0.18" stroke="#8b5cf6"/>
+    <text x="102" y="454" text-anchor="middle" font-size="11" font-weight="700" fill="#c4b5fd">5</text>
+    <text x="124" y="447" font-size="12.5" font-weight="700" fill="#e2e8f0">校验与置信度</text>
+    <text x="124" y="464" font-size="10.5" fill="#94a3b8">EXPLAIN 检查 + 公式化扣分，可复算</text>
+    <text x="494" y="454" text-anchor="end" font-size="10.5" fill="#a78bfa">置信 98</text>
+
+    <!-- 右：传统 NL2SQL 管线 -->
+    <rect x="680" y="182" width="456" height="306" rx="12" fill="#11151d" stroke="#06b6d4" stroke-opacity="0.55" stroke-width="1.5" filter="url(#softShadow)"/>
+    <rect x="696" y="196" width="4" height="16" rx="1" fill="url(#gradCyan)"/>
+    <text x="708" y="209" font-size="13" font-weight="700" fill="#e2e8f0">传统 NL2SQL 管线</text>
+    <text x="1120" y="209" text-anchor="end" font-size="11" fill="#67e8f9">Schema + 大模型端到端生成</text>
+    <rect x="696" y="224" width="424" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <circle cx="718" cy="246" r="11" fill="#06b6d4" fill-opacity="0.18" stroke="#06b6d4"/>
+    <text x="718" y="250" text-anchor="middle" font-size="11" font-weight="700" fill="#67e8f9">1</text>
+    <text x="740" y="243" font-size="12.5" font-weight="700" fill="#e2e8f0">模式读取</text>
+    <text x="740" y="260" font-size="10.5" fill="#94a3b8">9 张业务表 DDL 与中文列注释全量给模型</text>
+    <text x="1110" y="250" text-anchor="end" font-size="10.5" fill="#67e8f9">零本体</text>
+    <rect x="696" y="275" width="424" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <circle cx="718" cy="297" r="11" fill="#06b6d4" fill-opacity="0.18" stroke="#06b6d4"/>
+    <text x="718" y="301" text-anchor="middle" font-size="11" font-weight="700" fill="#67e8f9">2</text>
+    <text x="740" y="294" font-size="12.5" font-weight="700" fill="#e2e8f0">列名匹配</text>
+    <text x="740" y="311" font-size="10.5" fill="#94a3b8">命中 0 词 · "HbA1c""2型糖尿病"无字面命中</text>
+    <text x="1110" y="301" text-anchor="end" font-size="10.5" fill="#fbbf24">6 词靠猜</text>
+    <rect x="696" y="326" width="424" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <circle cx="718" cy="348" r="11" fill="#06b6d4" fill-opacity="0.18" stroke="#06b6d4"/>
+    <text x="718" y="352" text-anchor="middle" font-size="11" font-weight="700" fill="#67e8f9">3</text>
+    <text x="740" y="345" font-size="12.5" font-weight="700" fill="#e2e8f0">关联推断</text>
+    <text x="740" y="362" font-size="10.5" fill="#94a3b8">同名列推断候选 JOIN，不知道基数会扇出</text>
+    <text x="1110" y="352" text-anchor="end" font-size="10.5" fill="#67e8f9">136 候选</text>
+    <rect x="696" y="377" width="424" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <circle cx="718" cy="399" r="11" fill="#06b6d4" fill-opacity="0.18" stroke="#06b6d4"/>
+    <text x="718" y="403" text-anchor="middle" font-size="11" font-weight="700" fill="#67e8f9">4</text>
+    <text x="740" y="396" font-size="12.5" font-weight="700" fill="#e2e8f0">LLM 生成（deepseek-flash）</text>
+    <text x="740" y="413" font-size="10.5" fill="#94a3b8">temperature 0 · 响应 SHA256 缓存 · 失败降级 Mock</text>
+    <text x="1110" y="403" text-anchor="end" font-size="10.5" fill="#67e8f9">26.75s</text>
+    <rect x="696" y="428" width="424" height="44" rx="8" fill="#1a2029" stroke="#2a3242"/>
+    <circle cx="718" cy="450" r="11" fill="#06b6d4" fill-opacity="0.18" stroke="#06b6d4"/>
+    <text x="718" y="454" text-anchor="middle" font-size="11" font-weight="700" fill="#67e8f9">5</text>
+    <text x="740" y="447" font-size="12.5" font-weight="700" fill="#e2e8f0">风险检测</text>
+    <text x="740" y="464" font-size="10.5" fill="#94a3b8">8 条规则 + 真实证据查询，事后补救</text>
+    <text x="1110" y="454" text-anchor="end" font-size="10.5" fill="#67e8f9">1 条提示</text>
+
+    <!-- 汇合到唯一出口 -->
+    <path d="M 292 488 L 292 512 L 560 512" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
+    <path d="M 908 488 L 908 512 L 640 512" fill="none" stroke="#06b6d4" stroke-width="2" marker-end="url(#arrowCyan)"/>
+    <rect x="480" y="524" width="240" height="46" rx="10" fill="#1a2029" stroke="#10b981" stroke-opacity="0.6" filter="url(#softShadow)"/>
+    <text x="600" y="543" text-anchor="middle" font-size="12.5" font-weight="700" fill="#e2e8f0">SafeQueryExecutor · 同一库 · 同一出口</text>
+    <text x="600" y="561" text-anchor="middle" font-size="10.5" fill="#94a3b8">白名单单条 SELECT · 10 秒超时 · 500 行上限</text>
+
+    <!-- 结果对比卡 -->
+    <rect x="64" y="586" width="520" height="92" rx="12" fill="#11151d" stroke="#8b5cf6" stroke-opacity="0.55"/>
+    <text x="88" y="612" font-size="12" font-weight="700" fill="#e2e8f0">本体侧实测</text>
+    <rect x="196" y="596" width="86" height="22" rx="11" fill="#8b5cf6" fill-opacity="0.16" stroke="#8b5cf6" stroke-opacity="0.5"/>
+    <text x="239" y="611" text-anchor="middle" font-size="11" fill="#c4b5fd">26 ms</text>
+    <rect x="292" y="596" width="86" height="22" rx="11" fill="#8b5cf6" fill-opacity="0.16" stroke="#8b5cf6" stroke-opacity="0.5"/>
+    <text x="335" y="611" text-anchor="middle" font-size="11" fill="#c4b5fd">答案 533</text>
+    <rect x="388" y="596" width="86" height="22" rx="11" fill="#8b5cf6" fill-opacity="0.16" stroke="#8b5cf6" stroke-opacity="0.5"/>
+    <text x="431" y="611" text-anchor="middle" font-size="11" fill="#c4b5fd">置信 98</text>
+    <rect x="484" y="596" width="80" height="22" rx="11" fill="#8b5cf6" fill-opacity="0.16" stroke="#8b5cf6" stroke-opacity="0.5"/>
+    <text x="524" y="611" text-anchor="middle" font-size="11" fill="#c4b5fd">0 token</text>
+    <text x="88" y="638" font-size="10.5" fill="#94a3b8">每个决策可在"语义解析过程"页逐条核对，含未选中分支与理由</text>
+    <text x="88" y="660" font-size="10.5" fill="#94a3b8">SQL：锚表 COUNT(DISTINCT) + 3 个独立 EXISTS</text>
+
+    <rect x="616" y="586" width="520" height="92" rx="12" fill="#11151d" stroke="#06b6d4" stroke-opacity="0.55"/>
+    <text x="640" y="612" font-size="12" font-weight="700" fill="#e2e8f0">传统侧实测（真实 LLM 首调）</text>
+    <rect x="812" y="596" width="96" height="22" rx="11" fill="#06b6d4" fill-opacity="0.16" stroke="#06b6d4" stroke-opacity="0.5"/>
+    <text x="860" y="611" text-anchor="middle" font-size="11" fill="#67e8f9">26.78 s</text>
+    <rect x="918" y="596" width="86" height="22" rx="11" fill="#06b6d4" fill-opacity="0.16" stroke="#06b6d4" stroke-opacity="0.5"/>
+    <text x="961" y="611" text-anchor="middle" font-size="11" fill="#67e8f9">答案 533</text>
+    <rect x="1014" y="596" width="86" height="22" rx="11" fill="#06b6d4" fill-opacity="0.16" stroke="#06b6d4" stroke-opacity="0.5"/>
+    <text x="1057" y="611" text-anchor="middle" font-size="11" fill="#67e8f9">置信 97</text>
+    <text x="640" y="638" font-size="10.5" fill="#94a3b8">过程只有整段 DDL 与生成文本，无法说明"为什么这样查"</text>
+    <text x="640" y="660" font-size="10.5" fill="#94a3b8">SQL：三表 JOIN 链，每题一次 API 调用，按 token 计费</text>
+</svg>
